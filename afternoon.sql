@@ -113,7 +113,7 @@ FROM genre g
 JOIN track t ON g.genre_id = t.genre_id
 GROUP BY g.name;
 
-SELECT g.name, count(*)
+SELECT g.name, COUNT(*)
 FROM genre g
 JOIN track t ON t.genre_id = g.genre_id
 WHERE g.name IN ('Pop', 'Rock')
@@ -133,3 +133,88 @@ FROM invoice;
 
 SELECT DISTINCT company
 FROM customer;
+
+-- DELETE ROWS
+DELETE FROM practice_delete
+WHERE type = 'bronze';
+
+DELETE FROM practice_delete
+WHERE type = 'silver';
+
+DELETE FROM practice_delete
+WHERE value = 150;
+
+-- eCommerce Simulation
+CREATE TABLE orders(
+	order_id SERIAL,
+  user_id SERIAL,
+  product_id SERIAL
+);
+
+CREATE TABLE product(
+	product_id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  price FLOAT NOT NULL
+);
+
+CREATE TABLE users(
+	user_id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email TEXT NOT NULL
+);
+
+INSERT INTO users (name, email)
+VALUES ('Bob', 'bob@gmail.com'),
+       ('Bill', 'bill@gmail.com'),
+       ('Joe', 'joe@gmail.com');
+
+
+INSERT INTO product (name, price)
+VALUES  ('Pizza', 4.20),
+        ('Fries', 1.69),
+        ('Drink', 1.25);
+
+INSERT INTO orders (order_id, user_id, product_id)
+VALUES (1, 1, 1),
+			 (1, 1, 3),
+       (2, 2, 2),
+       (3, 3, 3),
+       (3, 3, 2),
+       (4, 1, 1)
+       ;
+
+ALTER TABLE orders
+ADD FOREIGN KEY (product_id) REFERENCES product (product_id);
+
+SELECT p.name
+FROM orders o
+JOIN product p ON o.product_id = p.product_id
+WHERE o.order_id = 1;
+
+SELECT *
+FROM orders;
+
+SELECT o.order_id, SUM(p.price) AS total_price
+FROM orders o
+JOIN product p ON o.product_id = p.product_id
+GROUP BY o.order_id;
+
+ALTER TABLE orders
+ADD FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+SELECT *
+FROM orders o
+JOIN users u ON o.user_id = u.user_id
+WHERE u.user_id = 1;
+
+SELECT u.user_id, COUNT(DISTINCT o.order_id) AS total_orders
+FROM orders o
+JOIN users u ON o.user_id = u.user_id
+GROUP BY u.user_id;
+
+SELECT u.user_id, SUM(p.price)
+FROM orders o
+JOIN product p ON o.product_id = p.product_id
+JOIN users u ON o.user_id = u.user_id
+GROUP BY u.user_id;
+
