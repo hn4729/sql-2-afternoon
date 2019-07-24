@@ -146,6 +146,7 @@ WHERE value = 150;
 
 -- eCommerce Simulation
 CREATE TABLE orders(
+  id SERIAL PRIMARY KEY,
 	order_id SERIAL,
   user_id SERIAL,
   product_id SERIAL
